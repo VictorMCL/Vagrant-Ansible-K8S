@@ -1,0 +1,3 @@
+---
+- name: Prueba master
+  command: uptime

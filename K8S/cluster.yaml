@@ -1,0 +1,14 @@
+---
+- name: Set kubernetes cluster (MASTER)
+  hosts: master
+  become: yes
+  roles:
+    - { role: systemconfig }
+    - { role: master }
+
+- name: Set kubernetes cluster (NODE)
+  hosts: node
+  become: yes
+  roles:
+    - { role: systemconfig }
+    - { role: node }
