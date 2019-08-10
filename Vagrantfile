@@ -3,6 +3,7 @@ NODES = 1
 NETWORK = '192.168.80.'
 ClUSTER_NAME = 'Desarrollo'
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+PASSWORD_ROOT = 'hola123'
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
@@ -13,7 +14,8 @@ Vagrant.configure(2) do |config|
       "node" => ["k8s-node[1:#{NODES}]"]
     }
     ansible.extra_vars = {
-      cluster_name: ClUSTER_NAME
+      cluster_name: ClUSTER_NAME,
+      password_root: PASSWORD_ROOT
     }
   end
 

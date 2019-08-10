@@ -1,0 +1,11 @@
+---
+- name: restart ssh_service
+  systemd: 
+    name: sshd 
+    state: restarted 
+
+- name: docker status
+  systemd:
+    name: docker
+    state: started
+    enabled: yes

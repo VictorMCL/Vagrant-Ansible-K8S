@@ -1,3 +1,43 @@
 ---
-- name: Prueba configuracion comun
-  command: uptime
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: Enable ssh password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication '
+    line: PasswordAuthentication yes
+  notify:
+    - restart ssh_service
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: generate hash pass
+  delegate_to: localhost
+  command:  python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt('hola123')" 
+  register: hash
+
+- name: hash generated
+  debug:
+    var: hash.stdout
+
+- name: update password
+  user:
+    name: root
+    update_password: always
+    password: '{{hash.stdout}}'
+
+- name: docker installation
+  include: docker.yaml
