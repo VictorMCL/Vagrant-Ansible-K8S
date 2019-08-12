@@ -1,3 +1,24 @@
----
-- name: Prueba master
-  command: uptime
+- name: mostras salida
+  debug:
+      msg: kubeadm init --apiserver-advertise-address="{{apiserver_ip}}" --node-name="{{node_name}}" --pod-network-cidr="{{network_pod_ip}}"
+      
+- name: Initialize the Kubernetes cluster using kubeadm
+  command: kubeadm init --apiserver-advertise-address="{{apiserver_ip}}" --node-name="{{node_name}}" --pod-network-cidr="{{network_pod_ip}}"
+  
+- name: Setup kubeconfig for vagrant user
+  command: "{{ item }}"
+  with_items:
+  - mkdir -p /home/vagrant/.kube
+  - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+  - chown vagrant:vagrant /home/vagrant/.kube/config
+
+- name: Install calico pod network
+  become: false
+  command: kubectl create -f https://docs.projectcalico.org/v3.4/getting-started/kubernetes/installation/hosted/calico.yaml
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[0]  }}" dest="./join-command"

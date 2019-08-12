@@ -1,3 +1,9 @@
+---
+- name: Add repository docker
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+
 - name: Install required packages
   yum:
     name: "{{ packages }}"
@@ -9,12 +15,6 @@
     - device-mapper-persistent-data
     - lvm2
 
-- name: Add repository docker
-  yum_repository:
-    name: docker
-    description: Docker YUM repo
-    baseurl: https://download.docker.com/linux/centos/docker-ce.repo
-
 - name: Install docker and its dependecies
   yum: 
     name: "{{ packages }}"
@@ -25,10 +25,21 @@
     - docker-ce 
     - docker-ce-cli 
     - containerd.io
-  notify:
-    - docker status
+
+- name: copy daemon.json
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+      
+- name: Docker start
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
 
 - name: Add vagrant user to docker group
   user:
     name: vagrant
     group: docker
+    append: yes

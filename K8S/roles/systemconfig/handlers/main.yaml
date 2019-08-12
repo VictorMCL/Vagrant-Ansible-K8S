@@ -4,8 +4,8 @@
     name: sshd 
     state: restarted 
 
-- name: docker status
+- name: Restart kubelet
   systemd:
-    name: docker
-    state: started
+    name: kubelet
+    state: restarted
     enabled: yes

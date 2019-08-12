@@ -1,6 +1,7 @@
 IMAGE ='centos/7' 
 NODES = 1
-NETWORK = '192.168.80.'
+NETWORK = "192.168.80."
+POD_NETWORK = "10.244.0.0/16"
 ClUSTER_NAME = 'Desarrollo'
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 PASSWORD_ROOT = 'hola123'
@@ -15,7 +16,10 @@ Vagrant.configure(2) do |config|
     }
     ansible.extra_vars = {
       cluster_name: ClUSTER_NAME,
-      password_root: PASSWORD_ROOT
+      password_root: PASSWORD_ROOT,
+      apiserver_ip: "#{NETWORK}#{200}",
+      network_pod_ip: "#{POD_NETWORK}",
+      node_name: "k8s-master"
     }
   end
 

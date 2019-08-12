@@ -3,6 +3,12 @@
   selinux:
     state: disabled
 
+- name: Stop & disable firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+
 - name: Enable ssh password authentication
   lineinfile:
     path: /etc/ssh/sshd_config
@@ -24,20 +30,23 @@
   command: swapoff -a
   when: ansible_swaptotal_mb > 0
 
-- name: generate hash pass
-  delegate_to: localhost
-  command:  python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt('hola123')" 
-  register: hash
+#- name: generate hash pass
+#  delegate_to: localhost
+#  command:  python -c "from passlib.hash import sha512_crypt; import getpass; print sha512_crypt.encrypt('hola123')" 
+#  register: hash
 
-- name: hash generated
-  debug:
-    var: hash.stdout
+#- name: hash generated
+#  debug:
+#    var: hash.stdout
 
-- name: update password
-  user:
-    name: root
-    update_password: always
-    password: '{{hash.stdout}}'
+#- name: update password
+#  user:
+#    name: root
+#    update_password: always
+#    password: '{{hash.stdout}}'
 
 - name: docker installation
   include: docker.yaml
+  
+- name: kubernetes installation
+  include: kubernetes.yaml

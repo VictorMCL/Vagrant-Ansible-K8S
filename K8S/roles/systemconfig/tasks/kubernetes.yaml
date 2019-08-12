@@ -1,0 +1,47 @@
+---
+- name: Add repository Kubernetes
+  yum_repository:
+    name: Kubernetes
+    description: k8s YUM repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled: 1
+    gpgcheck: 1
+    repo_gpgcheck: 1
+    gpgkey: 
+    - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+    - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+- name: create kubernetes.conf
+  file:
+    path: "/etc/sysctl.d/kubernetes.conf"
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: set kubernetes.conf
+  blockinfile:
+    path: /etc/sysctl.d/kubernetes.conf
+    block: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+
+- name: sysctl kubernetes.conf
+  command: sysctl --system
+      
+- name: Installing kubelet, kubeadm and kubectl
+  yum:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: yes
+  vars:
+    packages:
+    - kubelet 
+    - kubeadm 
+    - kubectl      
+
+- name: Restart kubelet
+  systemd:
+    name: kubelet
+    state: restarted
+    enabled: yes
