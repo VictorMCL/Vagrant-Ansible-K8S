@@ -11,20 +11,13 @@
     - https://packages.cloud.google.com/yum/doc/yum-key.gpg
     - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
-- name: create kubernetes.conf
-  file:
-    path: "/etc/sysctl.d/kubernetes.conf"
-    state: touch
+- name: copy kubernetes.conf
+  copy:
+    src: kubernetes.conf
+    dest: /etc/sysctl.d/kubernetes.conf
     owner: root
     group: root
     mode: '0644'
-
-- name: set kubernetes.conf
-  blockinfile:
-    path: /etc/sysctl.d/kubernetes.conf
-    block: |
-      net.bridge.bridge-nf-call-ip6tables = 1
-      net.bridge.bridge-nf-call-iptables = 1
 
 - name: sysctl kubernetes.conf
   command: sysctl --system

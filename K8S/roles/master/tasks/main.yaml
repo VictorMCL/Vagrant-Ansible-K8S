@@ -1,16 +1,18 @@
-- name: mostras salida
-  debug:
-      msg: kubeadm init --apiserver-advertise-address="{{apiserver_ip}}" --node-name="{{node_name}}" --pod-network-cidr="{{network_pod_ip}}"
-      
 - name: Initialize the Kubernetes cluster using kubeadm
   command: kubeadm init --apiserver-advertise-address="{{apiserver_ip}}" --node-name="{{node_name}}" --pod-network-cidr="{{network_pod_ip}}"
-  
+
 - name: Setup kubeconfig for vagrant user
   command: "{{ item }}"
   with_items:
   - mkdir -p /home/vagrant/.kube
   - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
   - chown vagrant:vagrant /home/vagrant/.kube/config
+
+- name: Copy kubeconfig to local file
+  copy: 
+    src: /etc/kubernetes/admin.conf 
+    dest: ./admin.conf
+    remote_src: yes
 
 - name: Install calico pod network
   become: false
@@ -21,4 +23,5 @@
   register: join_command
 
 - name: Copy join command to local file
-  local_action: copy content="{{ join_command.stdout_lines[0]  }}" dest="./join-command"
+  local_action: copy content="{{join_command.stdout_lines[0]}}" dest="./join-command"
+  become: false

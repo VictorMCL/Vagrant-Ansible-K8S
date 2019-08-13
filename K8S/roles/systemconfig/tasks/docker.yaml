@@ -26,6 +26,12 @@
     - docker-ce-cli 
     - containerd.io
 
+- name: Create directory docker
+  file: path=/etc/docker/ state=directory
+
+- name: Create directory docker.service
+  file: path=/etc/systemd/system/docker.service.d state=directory
+
 - name: copy daemon.json
   copy:
     src: daemon.json
