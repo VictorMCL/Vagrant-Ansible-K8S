@@ -9,14 +9,14 @@
   - chown vagrant:vagrant /home/vagrant/.kube/config
 
 - name: Copy kubeconfig to local file
-  copy: 
+  fetch: 
     src: /etc/kubernetes/admin.conf 
     dest: ./admin.conf
-    remote_src: yes
+    flat: yes
 
 - name: Install calico pod network
-  become: false
   command: kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+  become: false
 
 - name: Generate join command
   command: kubeadm token create --print-join-command
