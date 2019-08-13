@@ -1,3 +1,4 @@
 .vagrant/
 K8S/join-command
+K8S/admin.conf
 
