@@ -14,7 +14,7 @@
     dest: ./admin.conf
     flat: yes
 
-- name: Install calico pod network
+- name: Install flannel pod network
   command: kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   become: false
 

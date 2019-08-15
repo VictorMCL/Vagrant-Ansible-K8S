@@ -29,9 +29,9 @@
     update_cache: yes
   vars:
     packages:
-    - kubelet 
-    - kubeadm 
-    - kubectl      
+    - kubelet
+    - kubeadm
+    - kubectl
 
 - name: Restart kubelet
   systemd:
